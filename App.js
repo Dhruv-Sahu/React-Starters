@@ -1,26 +1,42 @@
 import React,{useState,useEffect} from 'react';
 import './App.css';
 
-const quotes = [
-  "“Life is what happens when you’re busy making other plans.”",
-  "“Get busy living or get busy dying.”",
-  "“You only live once, but if you do it right, once is enough.”",
-  "“Many of life’s failures are people who did not realize how close they were to success when they gave up.”",
-  "“Never let the fear of striking out keep you from playing the game.”",
-  "“Money and success don’t change people; they merely amplify what is already there.”"
-]
+let globalID = 0;
 
 function App() {
-  const [quote,setQuote] = useState(quotes[0]);
+  const [task,setTask] =useState("")
+  const [todos, setTodos] = useState([])
 
-  function randomizeQuote(){
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)]
-    setQuote(randomQuote);
+  function createTodo(event){       //We need to append so we , change the strings value(...oldTodos) 
+      event.preventDefault()
+      setTask('')
+      setTodos(oldTodos => {return [...oldTodos,{todo: task, id: globalID++}]}) //Now v have array of obj
+  }
+  
+  function deleteItem(itemID){
+    setTodos(oldTodos =>oldTodos.filter(item => item.id !== itemID))
   }
 
-  return <div className="App">
-      <h4>{quote}</h4>
-      <button onClick={randomizeQuote}>Click Me</button>
+
+  return <div>
+    <h1>The Best To-do App Ever</h1>
+    <form onSubmit={createTodo}>
+    <input 
+          type="text" 
+          value={task} 
+          onChange={event =>{
+              setTask(event.target.value)
+    }}/>
+    <button type="Submit">Create Todo</button>
+    </form>
+    <ul>
+      {todos.map((item,index) =>{
+        return <div key={item.id}>
+        <li>{item.todo}</li>
+        <button onClick={() => deleteItem(item.id)}>Delete</button>
+        </div>
+      })}
+    </ul>
   </div>
 }
 
